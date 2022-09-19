@@ -1,14 +1,8 @@
-#include "utilities.cpp"
-#include <Windows.h>
+#include <utilities.h>
 
-global_variable bool window_running = true;
+RenderState render_state;
+GlobalVars global_vars;
 
-struct RenderState {
-    int height, width;
-    void* memory;
-    BITMAPINFO bitmap_info;
-};
-global_variable RenderState render_state;
 //COLORS
 #define red 0xff5500
 
@@ -24,7 +18,7 @@ LRESULT CALLBACK window_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
     case WM_DESTROY:
     {
-        window_running = false;
+        global_vars.window_running = false;
     }
     break;
 
@@ -69,14 +63,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     
     // Window classes are registered with the system at run time
     // to register them we fill in a WNDCLASS structure as below
-    
-    
     window_class.lpszClassName = L"Game Window Class";
     window_class.lpfnWndProc = window_callback;
+
     // pointer to a callback function called window procedure,
     // used by the window to send messages to us
- 
-
 
     //Register class
     RegisterClass(&window_class);
@@ -86,7 +77,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     HDC hdc = GetDC(window);
 
 
-    while (window_running)
+    while (global_vars.window_running)
     {
         //input
         MSG message;
@@ -103,5 +94,4 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         //render
         StretchDIBits(hdc, 0, 0, render_state.width, render_state.height, 0, 0, render_state.width, render_state.height, render_state.memory, &render_state.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
     }
-
 }
